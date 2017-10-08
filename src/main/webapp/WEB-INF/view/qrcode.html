@@ -10,7 +10,17 @@
 生成的二维码如下：<br/>
 <div id="qrcode"></div>
 <script>
-    jQuery("#qrcode").qrcode("https://www.baidu.com");
+    var obj = {
+        render   : "canvas",//设置渲染方式
+        width       : 256,     //设置宽度
+        height      : 256,     //设置高度
+        typeNumber  : -1,      //计算模式
+        correctLevel    : 0,//纠错等级
+        background      : "#ffffff",//背景颜色
+        foreground      : "#000000", //前景颜色
+        text:"https://www.baidu.com" //内容
+    };
+    jQuery("#qrcode").qrcode(obj);
 </script>
 </body>
 </html>

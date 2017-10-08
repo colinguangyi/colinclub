@@ -30,7 +30,7 @@
        <mvc:default-servlet-handler />
 
        <!-- 设置静态文件路径-->
-       <mvc:resources mapping="/static/*" location="/static/"/>
+       <!--<mvc:resources mapping="/*" location="/static/"/>-->
 
        <!-- 对模型视图的解析 jsp-->
        <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
