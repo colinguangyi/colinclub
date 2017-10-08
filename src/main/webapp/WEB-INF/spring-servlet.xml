@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+       <!-- 开启springMVC注解，如@requestMapping等-->
+       <mvc:annotation-driven>
+              <mvc:message-converters>
+                     <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+                     <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+              </mvc:message-converters>
+       </mvc:annotation-driven>
+
+       <!-- 扫描注解，将@component，@controller等注解的bean注入spring容器-->
+       <!-- 此处只扫描controller -->
+       <context:component-scan base-package="com.colin">
+              <context:include-filter type="regex" expression=".Controller"/>
+       </context:component-scan>
+
+       <!-- 定义无需Controller的url<->view直接映射 -->
+       <!--<mvc:view-controller path="/" view-name="redirect:/user.html"/>-->
+
+       <!-- 加此默认配置，当dispathcher找不到路径时，可以加载静态文件-->
+       <mvc:default-servlet-handler />
+
+       <!-- 设置静态文件路径-->
+       <mvc:resources mapping="/static/*" location="/static/"/>
+
+       <!-- 对模型视图的解析 jsp-->
+       <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+              <!--<property name="prefix" value="/view/"/>-->
+              <!--<property name="suffix" value=".jsp"/>-->
+       <!--</bean>-->
+
+        <!--thymeleaf模板-->
+       <bean id="templateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+              <property name="prefix" value="/WEB-INF/view/"/>
+              <property name="suffix" value=".html"/>
+              <property name="templateMode" value="HTML5"/>
+              <property name="cacheable" value="false"/>
+              <property name="characterEncoding" value="UTF-8"/>
+       </bean>
+       <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+              <property name="templateResolver" ref="templateResolver"/>
+       </bean>
+
+        <!--thymeleaf视图解析器-->
+       <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+              <property name="templateEngine" ref="templateEngine"/>
+              <property name="characterEncoding" value="UTF-8"/>
+              <property name="order" value="2"/>
+       </bean>
+
+       <!--<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">-->
+              <!--<property name="contentNegotiationManager" ref="cnManager"/>-->
+              <!--<property name="viewResolvers">-->
+                     <!--<list>-->
+                            <!--<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">-->
+                                   <!--<property name="order" value="1"/>-->
+                            <!--</bean>-->
+                            <!--&lt;!&ndash; thymeleaf视图解析器&ndash;&gt;-->
+                            <!--&lt;!&ndash;<bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">&ndash;&gt;-->
+                                   <!--&lt;!&ndash;<property name="templateEngine" ref="templateEngine"/>&ndash;&gt;-->
+                                   <!--&lt;!&ndash;<property name="characterEncoding" value="UTF-8"/>&ndash;&gt;-->
+                                   <!--&lt;!&ndash;<property name="order" value="2"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+                     <!--</list>-->
+              <!--</property>-->
+       <!--</bean>-->
+       <!--<bean id="cnManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">-->
+              <!--<property name="favorPathExtension" value="true"/>-->
+              <!--<property name="ignoreAcceptHeader" value="true"/>-->
+              <!--<property name="defaultContentType" value="text/html"/>-->
+              <!--<property name="mediaTypes">-->
+                     <!--<map>-->
+                            <!--<entry key="html" value="text/html"/>-->
+                            <!--<entry key="xml" value="application/xml"/>-->
+                            <!--<entry key="json" value="application/json"/>-->
+                     <!--</map>-->
+              <!--</property>-->
+       <!--</bean>-->
+</beans>

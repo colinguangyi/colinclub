@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.alibaba.com/schema/stat http://www.alibaba.com/schema/stat.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+       <!-- 开启注解及自动扫描,Controller在spring-servlet.xml中进行了配置，所以此处过滤掉，不重复扫描-->
+       <context:component-scan base-package="com.colin">
+              <context:exclude-filter type="regex" expression=".Controller"/>
+       </context:component-scan>
+       
+       <!-- 开启async-->
+       <task:executor id="myexecutor" pool-size="5"/>
+       <task:annotation-driven executor="myexecutor"/>
+
+       <!-- 读取配置文件-->
+       <context:property-placeholder ignore-unresolvable="true" location="classpath*:/application.properties" />
+
+       <!-- orm config begin-->
+       <!-- 配置数据源-->
+       <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+              <!-- 驱动名称 -->
+              <property name="driverClassName" value="${jdbc.driver}" />
+              <!-- JDBC连接串 -->
+              <property name="url" value="${jdbc.url}" />
+              <!-- 数据库用户名称 -->
+              <property name="username" value="${jdbc.username}" />
+              <!-- 数据库密码 -->
+              <property name="password" value="${jdbc.password}" />
+              <!-- 连接池最大使用连接数量 -->
+              <property name="maxActive" value="${jdbc.maxActive}" />
+              <!-- 初始化大小连接数 -->
+              <property name="initialSize" value="${jdbc.initialSize}" />
+              <!-- 获取连接最大等待时间 -->
+              <property name="maxWait" value="${jdbc.maxWait}" />
+              <!-- 连接池最小空闲连接数 -->
+              <property name="minIdle" value="${jdbc.minIdle}" />
+              <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+              <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+              <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+              <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+              <!-- 测试有效用的SQL Query -->
+              <property name="validationQuery" value="SELECT 'x'" />
+              <!-- 连接空闲时测试是否有效 -->
+              <property name="testWhileIdle" value="true" />
+              <!-- 获取连接时测试是否有效 -->
+              <property name="testOnBorrow" value="false" />
+              <!-- 归还连接时是否测试有效 -->
+              <property name="testOnReturn" value="false" />
+              <!-- 通过别名的方式配置扩展插件，常用的插件有：监控统计用的filter:stat 日志用的filter:log4j 防御sql注入的filter:wall -->
+              <property name="filters" value="stat" />
+       </bean>
+       <!-- Jpa Entity Manager 配置-->
+       <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+              <property name="dataSource" ref="dataSource"/>
+              <property name="packagesToScan" value="com.colin.web.entity"/>
+              <property name="jpaVendorAdapter">
+                     <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+              </property>
+              <property name="jpaProperties">
+                     <props>
+                            <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.DefaultNamingStrategy</prop>
+                            <prop key="hibernate.show_sql">true</prop>
+                     </props>
+              </property>
+       </bean>
+       <!-- Jpa 事务配置-->
+       <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+              <property name="entityManagerFactory" ref="entityManagerFactory"/>
+       </bean>
+       <!-- 使用注解annotation定义事务-->
+       <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+       <!-- Jpa 配置-->
+       <jpa:repositories base-package="com.colin.web" transaction-manager-ref="transactionManager"
+                         entity-manager-factory-ref="entityManagerFactory"/>
+       <!-- orm config end-->
+
+       <!-- ActiveMQ的connectionFactory-->
+       <bean id="activeConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+              <property name="brokerURL"
+                        value="failover:(tcp://192.168.253.132:61616,tcp://192.168.253.132:61617,tcp://192.168.253.132:61618)"/>
+       </bean>
+       <!-- spring jms_spring 提供连接池-->
+       <bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+              <property name="targetConnectionFactory" ref="activeConnectionFactory"/>
+       </bean>
+       <!-- 队列目的地，点对点-->
+       <bean id="queueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+              <constructor-arg value="queue"/>
+       </bean>
+
+       <!-- topic目的地-->
+       <bean id="topicDestination" class="org.apache.activemq.command.ActiveMQTopic">
+              <constructor-arg value="topic"/>
+       </bean>
+
+       <!-- redis集群-->
+       <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+              <constructor-arg>
+                     <set>
+                            <bean class="redis.clients.jedis.HostAndPort">
+                                   <constructor-arg name="host" value="192.168.253.132"/>
+                                   <constructor-arg name="port" value="7001"/>
+                            </bean>
+                            <bean class="redis.clients.jedis.HostAndPort">
+                                   <constructor-arg name="host" value="192.168.253.132"/>
+                                   <constructor-arg name="port" value="7002"/>
+                            </bean>
+                            <bean class="redis.clients.jedis.HostAndPort">
+                                   <constructor-arg name="host" value="192.168.253.132"/>
+                                   <constructor-arg name="port" value="7003"/>
+                            </bean>
+                            <bean class="redis.clients.jedis.HostAndPort">
+                                   <constructor-arg name="host" value="192.168.253.132"/>
+                                   <constructor-arg name="port" value="7004"/>
+                            </bean>
+                            <bean class="redis.clients.jedis.HostAndPort">
+                                   <constructor-arg name="host" value="192.168.253.132"/>
+                                   <constructor-arg name="port" value="7005"/>
+                            </bean>
+                            <bean class="redis.clients.jedis.HostAndPort">
+                                   <constructor-arg name="host" value="192.168.253.132"/>
+                                   <constructor-arg name="port" value="7006"/>
+                            </bean>
+                     </set>
+              </constructor-arg>
+       </bean>
+
+</beans>

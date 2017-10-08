@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>二维码生成</title>
+    <script src="../../static/js/lib/jquery-2.1.4.min.js" th:src="@{/static/js/lib/jquery-2.1.4.min.js}"></script>
+    <script src="../../static/js/lib/jquery.qrcode.min.js" th:src="@{/static/js/lib/jquery.qrcode.min.js}"></script>
+</head>
+<body>
+生成的二维码如下：<br/>
+<div id="qrcode"></div>
+<script>
+    jQuery("#qrcode").qrcode("https://www.baidu.com");
+</script>
+</body>
+</html>

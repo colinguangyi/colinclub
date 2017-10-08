@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+       <import resource="application.xml"/>
+
+       <!-- 配置jmsTemplate用于发送消息-->
+       <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+              <property name="connectionFactory" ref="connectionFactory"/>
+       </bean>
+
+       <!-- 引入生产者类-->
+       <bean id="producerImpl" class="com.colin.jms_spring.producer.ProducerImpl"/>
+
+</beans>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <title>用户操作</title>
+    <script src="/static/js/lib/jquery-2.1.4.min.js" th:src="@{/static/js/lib/jquery-2.1.4.min.js}"></script>
+
+</head>
+<body>
+  <form action="/user/123" method="post">
+    <input type="text" name="id" />
+    <input type="text" name="name" />
+    <input type="submit" value="提交"/>
+  </form>
+</body>
+</html>
