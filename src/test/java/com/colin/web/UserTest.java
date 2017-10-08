@@ -42,4 +42,23 @@ public class UserTest {
         }
 
     }
+
+    @Test
+    public void test3(){
+        User user = new User();
+        user.setAge(20);
+        user.setName("test");
+        System.out.println(userService.add(user));
+    }
+
+    @Test
+    public void test4(){
+        String path = "C:\\Users\\zlz\\Desktop\\11.xlsx";
+        try{
+            userService.import2DB(path);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }

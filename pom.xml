@@ -189,6 +189,20 @@
             <version>${zxing.version}</version>
         </dependency>
         <!-- zxing(二维码生成包) END-->
+
+        <!--POI（excel导入相关）BEGIN-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.16</version>
+        </dependency>
+        <!--POI（excel导入相关）END-->
+
     </dependencies>
 
     <build>
