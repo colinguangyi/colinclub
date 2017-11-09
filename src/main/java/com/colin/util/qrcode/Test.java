@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Test {
     public static void main(String[] args) {
-        String content = "https://www.mumu18.com";
+        String content = "https://www.baidu.com";
         String imgPath = "C:\\Users\\zlz\\Desktop\\img.png";
         QRCodeUtil qrCodeUtil = new QRCodeUtil(300, 300);
         qrCodeUtil.setEncode("utf-8");

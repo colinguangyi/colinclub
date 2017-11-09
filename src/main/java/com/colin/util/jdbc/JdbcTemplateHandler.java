@@ -64,11 +64,11 @@ public class JdbcTemplateHandler {
                         totalCount[0] = rs.getLong(1);
                     }
                 });
-        //查询分页sql（mybatis）
-//        String pageSql = sql + " limit " + (pageNo - 1) * pageSize + "," + pageSize;
+        //查询分页sql（mysql）
+        String pageSql = sql + " limit " + (pageNo - 1) * pageSize + "," + pageSize;
 
         //查询分页sql（postgresql）
-        String pageSql = sql + " limit " + pageSize + " offset " +(pageNo - 1) * pageSize;
+//        String pageSql = sql + " limit " + pageSize + " offset " +(pageNo - 1) * pageSize;
 
         final List<Map<String, Object>> resultMapList = new ArrayList<Map<String, Object>>();
         getJdbcTemplate().query(pageSql,

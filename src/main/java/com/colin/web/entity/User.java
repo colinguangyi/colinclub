@@ -1,6 +1,7 @@
 package com.colin.web.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author zhaolz
@@ -15,6 +16,27 @@ public class User {
     private String name;
     private int age;
     private String address;
+
+    @Column(name = "begin_time")
+    private Date beginTime;
+    @Column(name = "end_time")
+    private Date endTime;
+
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
 
     public Long getId() {
         return id;
@@ -55,6 +77,8 @@ public class User {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", address='" + address + '\'' +
+                ", beginTime=" + beginTime +
+                ", endTime=" + endTime +
                 '}';
     }
 }
